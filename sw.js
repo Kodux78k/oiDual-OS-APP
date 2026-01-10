@@ -1,4 +1,4 @@
-const CACHE_NAME = 'pwa-dual//fusi-OS-App-v0';
+const CACHE_NAME = 'pwa-dual//fusi-OS-App-v1';
 const ASSETS = [
     './',
     'index.html',
