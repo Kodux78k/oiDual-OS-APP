@@ -963,7 +963,7 @@
         speechSynthesis.onvoiceschanged = () => { window._vozes = speechSynthesis.getVoices(); };
         
         // Particles
-        if(window.particlesJS) particlesJS('particles-js',{ particles:{ number:{value:40},color:{value:['#0ff','#f0f']}, shape:{type:'circle'},opacity:{value:0.4},size:{value:2.4}, move:{enable:true,speed:1.5} }, retina_detect:true });
+        if(window.particlesJS) particlesJS('particles-js',{ particles:{ number:{value:24},color:{value:['#0ff','#f0f']}, shape:{type:'circle'},opacity:{value:0.4},size:{value:2.4}, move:{enable:true,speed:1.5} }, retina_detect:true });
 
         SYSTEM.booted = true;
         console.log('DUAL FUSION OS // ONLINE');
@@ -2203,7 +2203,8 @@ els.keysModal.addEventListener('click', (e) => {
     navigator.serviceWorker.register('./sw.js')
       .then(() => console.log('Service Worker Registered'));
   }
-</script><script src="https://unpkg.com/lucide@latest"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.6/purify.min.js"></script><script>
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.6/purify.min.js"></script><script>
   const App = {
     config: {
       vaultKey: 'dual_vault_data',
