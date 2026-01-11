@@ -2082,7 +2082,7 @@
       speechSynthesis.onvoiceschanged = () => { window._vozes = speechSynthesis.getVoices(); };
       
       // Init Particles
-      particlesJS('particles-js',{ particles:{ number:{value:40},color:{value:['#0ff','#f0f']}, shape:{type:'circle'},opacity:{value:0.4},size:{value:2.4}, move:{enable:true,speed:1.5} }, retina_detect:true });
+      particlesJS('particles-js',{ particles:{ number:{value:20},color:{value:['#0ff','#f0f']}, shape:{type:'circle'},opacity:{value:0.4},size:{value:2.4}, move:{enable:true,speed:1.5} }, retina_detect:true });
 
       // Buttons
       document.getElementById('sendBtn').addEventListener('click', sendMessage);
@@ -2156,12 +2156,7 @@
   </script>
 
 
-<script>
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('./sw.js')
-        .then(() => console.log('Service Worker Registered'));
-    }
-  </script><script src="https://unpkg.com/lucide@latest"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script><script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script><script>
+<script src="https://unpkg.com/lucide@latest"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script><script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script><script>
     lucide.createIcons();
 
     const els = {
@@ -2768,4 +2763,253 @@
         mantraText.classList.add('fade-out'); setTimeout(()=>{ mantraText.innerHTML = 'Do seu jeito. <strong>Sempre</strong> único. <strong>Sempre</strong> seu.'; mantraText.classList.remove('fade-out'); },300);
       }
     });
-  </script></body></html>
+  </script>
+
+<!-- ======= TEXT_BEAUTY_V3 ADAPTADO PARA DUAL // UNIFIED · OS ======= -->
+<style id="TEXT_BEAUTY_V3">
+:root{
+  --txt-card: color-mix(in oklab, var(--bg-panel, #0a0a0c) 92%, black);
+  --txt-bd: color-mix(in oklab, var(--text-main, #e5e7eb) 16%, transparent);
+  --txt-shadow: 0 6px 24px rgba(0,0,0,.25), inset 0 0 0 1px var(--txt-bd);
+  --chip-bg: linear-gradient(42deg, var(--neon-cyan, #00f2ff), var(--neon-purple, #bd00ff));
+  --chip-ink: #000;
+  --paren-ink: color-mix(in oklab, var(--text-main, #e5e7eb) 92%, white);
+}
+
+/* Base para blocos de resposta já existentes */
+.response-block p{
+  text-wrap: pretty;
+  line-height: 1.65;
+  letter-spacing: .01em;
+  margin: .65rem 0;
+  hyphens: auto;
+}
+
+.response-block .tb-kv-head{
+  font-weight: 800;
+  letter-spacing:.02em;
+  margin: 1.2rem 0 .4rem;
+}
+
+/* Parênteses → realce sutil */
+.tb-span-paren{
+  padding: .05rem .35rem;
+  border-radius: .55rem;
+  border: 1px solid var(--txt-bd);
+  color: var(--paren-ink);
+  background: color-mix(in oklab, var(--txt-card) 86%, transparent);
+}
+
+/* Chips (colchetes) clicáveis */
+.tb-chip, .tb-chip-btn{
+  display:inline-grid; place-items:center;
+  padding:.25rem .6rem; border-radius:999px;
+  background: var(--chip-bg); color: var(--chip-ink);
+  font-weight: 700; letter-spacing:.02em;
+  box-shadow: 0 2px 10px rgba(0,0,0,.35);
+  cursor: pointer; user-select: none;
+}
+.tb-chip + .tb-chip{ margin-left:.35rem; }
+
+/* Copy badge para listas */
+.tb-copy-badge{
+  position:absolute; top:.5rem; right:.5rem;
+  font-size:.78rem; padding:.22rem .45rem; border-radius:999px;
+  background: color-mix(in oklab, #fff 12%, var(--txt-card));
+  border: 1px solid var(--txt-bd);
+  color: var(--text-main); opacity:.85; transition:.18s; user-select:none;
+  cursor:pointer;
+}
+
+/* Raw HTML container (visual) */
+.tb-raw-html {
+  background: var(--txt-card); border: 1px dashed var(--txt-bd);
+  border-radius: 12px; padding: .75rem; margin: .65rem 0;
+}
+.tb-raw-html .tb-raw-note{ color: color-mix(in oklab, var(--text-main) 62%, transparent); font-size:.9em; margin-bottom:.35rem; }
+</style>
+
+<script id="TEXT_BEAUTY_V3_SCRIPT">
+(function(){
+  // Unique guard so we don't conflict with other injected patches
+  if(window.__DUAL_TEXT_BEAUTY_V3_LOADED__) return;
+  window.__DUAL_TEXT_BEAUTY_V3_LOADED__ = true;
+
+  // Prefer local speak hook if present (your app has speakText)
+  function _safeSpeakLocal(msg, opts){
+    try{
+      if(typeof window.speakText === 'function') return window.speakText(String(msg||''), opts && opts.onend);
+      if(window.Infodox && typeof window.Infodox.speakViaApp === 'function') return window.Infodox.speakViaApp(msg, opts);
+      const u = new SpeechSynthesisUtterance(String(msg||''));
+      u.lang = (opts && opts.lang) || 'pt-BR';
+      u.rate = (opts && opts.rate) || 1.0;
+      if(opts && opts.onend) u.onend = opts.onend;
+      window.speechSynthesis.cancel(); window.speechSynthesis.speak(u);
+    }catch(e){ console.warn('[TBV3] speak fail', e); }
+  }
+
+  // Processa markdown se marked estiver disponível (não obrigatório)
+  function processInline(root=document){
+    (root || document).querySelectorAll('.response-block').forEach(block=>{
+      if(block.dataset.tbv3_md) return;
+      try{
+        const raw = block.dataset.raw || block.innerText || '';
+        if(typeof marked !== 'undefined' && /[#_*`]/.test(raw)){
+          block.innerHTML = marked.parse(raw);
+        }
+      }catch(e){}
+      block.dataset.tbv3_md = '1';
+    });
+  }
+
+  // Adiciona botão copiar em <pre> dentro de .response-block
+  function beautifyFlow(root=document){
+    (root || document).querySelectorAll('.response-block pre').forEach(pre=>{
+      if(pre.dataset.tbv3_code) return;
+      const btn = document.createElement('button');
+      btn.className = 'tb-chip-btn';
+      btn.textContent = 'Copiar Código';
+      btn.style.position = 'absolute';
+      btn.style.right = '10px';
+      btn.style.top = '8px';
+      btn.style.zIndex = 6;
+      btn.onclick = (ev)=>{
+        ev.stopPropagation();
+        try{
+          const code = pre.querySelector('code') ? pre.querySelector('code').innerText : pre.innerText;
+          navigator.clipboard.writeText(code);
+          btn.textContent = 'Copiado!';
+          _safeSpeakLocal('Código copiado para a área de transferência.');
+          setTimeout(()=>{ btn.textContent = 'Copiar Código'; }, 1400);
+        }catch(err){ console.warn(err); }
+      };
+      // ensure pre has relative positioning
+      pre.style.position = pre.style.position || 'relative';
+      pre.appendChild(btn);
+      pre.dataset.tbv3_code = '1';
+    });
+  }
+
+  // Copiar listas (<ul>, <ol>) within .response-block
+  function enableCopyLists(root=document){
+    (root || document).querySelectorAll('.response-block ul, .response-block ol').forEach(list=>{
+      if(list.dataset.tbv3_list) return;
+      // wrap list in a relative container so badge can be absolute
+      const wrapper = document.createElement('div');
+      wrapper.style.position = 'relative';
+      list.parentNode.insertBefore(wrapper, list);
+      wrapper.appendChild(list);
+      const badge = document.createElement('button');
+      badge.className = 'tb-copy-badge';
+      badge.textContent = 'Copiar Lista';
+      badge.onclick = (ev)=>{
+        ev.stopPropagation();
+        const txt = Array.from(list.querySelectorAll('li')).map(li=>li.innerText).join('\n');
+        try{ navigator.clipboard.writeText(txt); _safeSpeakLocal('Lista copiada.'); }catch(e){ console.warn(e); }
+        badge.textContent = 'Copiado!';
+        setTimeout(()=> badge.textContent = 'Copiar Lista', 1200);
+      };
+      wrapper.appendChild(badge);
+      list.dataset.tbv3_list = '1';
+    });
+  }
+
+  // Render raw HTML safely if element has data-raw (uses DOMPurify if present)
+  function renderRawHTML(root=document){
+    (root || document).querySelectorAll('.response-block[data-raw]').forEach(block=>{
+      if(block.dataset.tbv3_raw) return;
+      const raw = block.dataset.raw || '';
+      if(/<\s*(div|img|p|table|section|iframe|svg)/i.test(raw)){
+        try{
+          let safe = raw;
+          if(window.DOMPurify && typeof DOMPurify.sanitize === 'function') safe = DOMPurify.sanitize(raw, {ADD_ATTR: ['allow','allowfullscreen','loading']});
+          const tmp = document.createElement('div');
+          tmp.innerHTML = safe;
+          // keep meta area (append sanitized content inside a tb-raw-html)
+          const wrapper = document.createElement('div');
+          wrapper.className = 'tb-raw-html';
+          wrapper.innerHTML = '<div class="tb-raw-note">Conteúdo HTML renderizado</div>';
+          wrapper.appendChild(tmp);
+          block.innerHTML = ''; // replace inner content safely
+          block.appendChild(wrapper);
+        }catch(e){ console.warn('[TBV3] renderRawHTML fail', e); }
+      }
+      block.dataset.tbv3_raw = '1';
+    });
+  }
+
+  // TrinityTTS: inject "Ler com Trinity" into .response-block .meta (if present)
+  function injectTrinity(root=document){
+    (root || document).querySelectorAll('.response-block').forEach(block=>{
+      if(block.dataset.tbv3_trinity) return;
+      try{
+        const meta = block.querySelector('.meta') || block;
+        const btn = document.createElement('button');
+        btn.className = 'tb-chip';
+        btn.title = 'Ler com Trinity';
+        btn.style.marginRight = '6px';
+        btn.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 1v22"/></svg>';
+        btn.onclick = (ev) => {
+          ev.stopPropagation();
+          const text = block.dataset.raw || Array.from(block.querySelectorAll('p')).map(p=>p.innerText).join('\n');
+          _safeSpeakLocal(text);
+        };
+        if(meta) meta.insertBefore(btn, meta.firstChild);
+      }catch(e){ console.warn(e); }
+      block.dataset.tbv3_trinity = '1';
+    });
+  }
+
+  // Public run function for manual invocation
+  window.__DUAL_TEXT_BEAUTY_V3__ = {
+    processInline, beautifyFlow, enableCopyLists, renderRawHTML, injectTrinity
+  };
+
+  // MutationObserver to watch #response area, and fallback to body
+  function fireRender(node){
+    try{
+      const root = node || document.getElementById('response') || document;
+      processInline(root); renderRawHTML(root); beautifyFlow(root); enableCopyLists(root); injectTrinity(root);
+    }catch(e){ console.warn('[TBV3] fireRender', e); }
+  }
+
+  // Listen for custom event if other modules dispatch it
+  document.addEventListener('infodx:rendered', (e)=>{
+    const node = e && e.detail && e.detail.node ? e.detail.node : document.getElementById('response') || document;
+    fireRender(node);
+  });
+
+  // Kick after DOM ready
+  document.addEventListener('DOMContentLoaded', ()=> setTimeout(()=> fireRender(document.getElementById('response') || document), 80));
+
+  // Observe dynamic inserts in response container
+  const respTarget = document.getElementById('response') || document.body;
+  try{
+    const mo = new MutationObserver((mut)=>{
+      for(const m of mut){
+        if(!m.addedNodes) continue;
+        for(const n of m.addedNodes){
+          if(n.nodeType !== 1) continue;
+          // If a new .response-block or .page added, process it
+          if(n.matches && (n.matches('.response-block') || n.matches('.page') || n.querySelector && (n.querySelector('.response-block')||n.querySelector('.page')))){
+            fireRender(n);
+          }
+        }
+      }
+    });
+    mo.observe(respTarget, { childList:true, subtree:true });
+  }catch(e){ console.warn('[TBV3] MutationObserver failed', e); }
+
+  // expose a convenience fn
+  window.__DUAL_TEXT_BEAUTY_V3_RUN__ = (sel) => {
+    const root = sel ? document.querySelector(sel) : (document.getElementById('response') || document);
+    fireRender(root);
+  };
+
+  console.info('[TEXT_BEAUTY_V3] Adapted loader initialized for DUAL / response-blocks.');
+})();
+</script>
+<!-- ======= FIM DO PATCH ADAPTADO ======= -->
+
+
+</body></html>
